@@ -6,6 +6,6 @@ use Magento\Framework\Component\ComponentRegistrar;
 
 ComponentRegistrar::register(
     ComponentRegistrar::MODULE,
-    'Example_Module',
+    'Iranimij_GitExtensionChecker',
     __DIR__
 );

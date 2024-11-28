@@ -3,10 +3,11 @@
     "description": "Example module for Magento 2",
     "require": {
         "php": "~8.1.0||~8.2.0",
-        "magento/framework": "103.0.*"
+        "magento/framework": "103.0.*",
+        "sebastianfeldmann/git": "^3.1",
+        "yireo/magento2-extensionchecker": "^2.2"
     },
     "type": "magento2-module",
-    "version": "1.0.0",
     "license": [
         "OSL-3.0",
         "AFL-3.0"
@@ -16,7 +17,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Example\\Module\\": ""
+            "Iranimij\\GitExtensionChecker\\": ""
         }
     }
 }
