@@ -8,10 +8,7 @@
         "yireo/magento2-extensionchecker": "^2.2"
     },
     "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
+    "license": "OSL-3.0",
     "autoload": {
         "files": [
             "registration.php"
