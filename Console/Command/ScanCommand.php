@@ -10,24 +10,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Magento\Framework\Serialize\SerializerInterface;
-use Iranimij\GitExtensionChecker\Model\Scan;
 
 class ScanCommand extends Command
 {
-    private Scan $scan;
-
-    private SerializerInterface $serializer;
-
     public function __construct(
-        Scan $scan,
-        SerializerInterface $serializer,
         private readonly DirectoryList $dir,
         $name = null,
     ) {
         parent::__construct($name);
-        $this->scan       = $scan;
-        $this->serializer = $serializer;
     }
 
     protected function configure()
@@ -38,30 +28,28 @@ class ScanCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $gitRepository = new Repository($this->dir->getRoot());
-        $currentBranch = $gitRepository->getInfoOperator()->getCurrentBranch();
-        $diff          = $gitRepository->getDiffOperator()->compare('main', $currentBranch);
-
+        $gitRepository  = new Repository($this->dir->getRoot());
+        $currentBranch  = $gitRepository->getInfoOperator()->getCurrentBranch();
+        $diff           = $gitRepository->getDiffOperator()->compare('main', $currentBranch);
+        $changedModules = [];
         foreach ($diff as $item) {
-            $explodedItem = explode('/', $item->getName());
+            $explodedName = explode('/', $item->getName());
+            $namePath     = $explodedName[0] . '/' . $explodedName[1];
 
-            if (empty($explodedItem[0]) || empty($explodedItem[1]) || empty($explodedItem[2])) {
+            if (in_array($namePath, $changedModules)) {
                 continue;
             }
 
-            $appModule    = $this->dir->getRoot()
-                . "/$explodedItem[0]/$explodedItem[1]/$explodedItem[2]/$explodedItem[3]/registration.php";
-            $customModule = $this->dir->getRoot()
-                . "/$explodedItem[0]/$explodedItem[1]/$explodedItem[2]/registration.php";
+            $module = $this->getModuleRegistrationFilePath($item->getName());
+
             if (
-                !file_exists($appModule)
-                && !file_exists($customModule)
+                $module === null
+                || !file_exists($module)
             ) {
                 continue;
             }
-            $module  = file_exists($appModule) ? $appModule : $customModule;
-            $content = file_get_contents($module);
-
+            $content          = file_get_contents($module);
+            $changedModules[] = $namePath;
             if (empty($content)) {
                 continue;
             }
@@ -76,5 +64,21 @@ class ScanCommand extends Command
         }
 
         return 1;
+    }
+
+    private function getModuleRegistrationFilePath($filePath)
+    {
+        if (file_exists($filePath . '/registration.php')) {
+            return $filePath . '/registration.php';
+        }
+
+        $explodedPath = explode('/', $filePath);
+        array_pop($explodedPath);
+
+        if (file_exists($this->dir->getRoot() . '/' . implode('/', $explodedPath) . '/registration.php')) {
+            return $this->dir->getRoot() . '/' . implode('/', $explodedPath) . '/registration.php';
+        }
+
+        $this->getModuleRegistrationFilePath(implode('/', $explodedPath));
     }
 }
