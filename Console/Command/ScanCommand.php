@@ -34,8 +34,8 @@ class ScanCommand extends Command
         $changedModules = [];
         $moduleNames    = [];
         foreach ($diff as $item) {
-            $explodedName = explode('/', $item->getName());
-            $namePath     = $explodedName[0] . '/' . $explodedName[1];
+            $explodedName = explode(DIRECTORY_SEPARATOR, $item->getName());
+            $namePath     = $explodedName[0] . DIRECTORY_SEPARATOR . $explodedName[1];
 
             if (in_array($namePath, $changedModules)) {
                 continue;
@@ -49,8 +49,10 @@ class ScanCommand extends Command
             ) {
                 continue;
             }
+
             $content          = file_get_contents($module);
             $changedModules[] = $namePath;
+
             if (empty($content)) {
                 continue;
             }
