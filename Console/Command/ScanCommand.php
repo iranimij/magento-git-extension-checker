@@ -62,13 +62,13 @@ class ScanCommand extends Command
             $moduleNames[] = $moduleName;
         }
 
-        $greetInput = new ArrayInput([
+        $input = new ArrayInput([
             'command'           => 'yireo_extensionchecker:scan',
             '--module'          => implode(',', $moduleNames),
             '--hide-needless'   => '1',
             '--hide-deprecated' => '1',
         ]);
-        $this->getApplication()->doRun($greetInput, $output);
+        $this->getApplication()->doRun($input, $output);
 
         return 1;
     }
