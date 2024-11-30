@@ -32,6 +32,7 @@ class ScanCommand extends Command
         $currentBranch  = $gitRepository->getInfoOperator()->getCurrentBranch();
         $diff           = $gitRepository->getDiffOperator()->compare('main', $currentBranch);
         $changedModules = [];
+        $moduleNames    = [];
         foreach ($diff as $item) {
             $explodedName = explode('/', $item->getName());
             $namePath     = $explodedName[0] . '/' . $explodedName[1];
@@ -56,12 +57,16 @@ class ScanCommand extends Command
 
             preg_match("/'([^']+)'/", $content, $matches);
             $moduleName = $matches[1] ?: '';
-            $greetInput = new ArrayInput([
-                'command'  => 'yireo_extensionchecker:scan',
-                '--module' => $moduleName,
-            ]);
-            $this->getApplication()->doRun($greetInput, $output);
+            $moduleNames[] = $moduleName;
         }
+
+        $greetInput = new ArrayInput([
+            'command'           => 'yireo_extensionchecker:scan',
+            '--module'          => implode(',', $moduleNames),
+            '--hide-needless'   => '1',
+            '--hide-deprecated' => '1',
+        ]);
+        $this->getApplication()->doRun($greetInput, $output);
 
         return 1;
     }
