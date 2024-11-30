@@ -1,6 +1,6 @@
 # Iranimij_GitExtensionChecker
 
-The **Iranimij_GitExtensionChecker** module is an enhancement of the `Yireo_ExtensionChecker` module. It focuses on analyzing the dependencies of Magento 2 modules that have been modified in the current Git branch compared to the `main` branch. This helps ensure that only the relevant module dependencies are checked, streamlining your development workflow.
+The **Iranimij_GitExtensionChecker** module is on top of the `Yireo_ExtensionChecker` module. It focuses on analyzing the dependencies of Magento 2 modules that have been modified in the current Git branch compared to the `main` branch. This helps ensure that only the relevant module dependencies are checked, streamlining your development workflow.
 
 ## Features
 
