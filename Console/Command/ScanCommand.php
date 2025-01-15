@@ -86,6 +86,6 @@ class ScanCommand extends Command
             return $this->dir->getRoot() . '/' . implode('/', $explodedPath) . '/registration.php';
         }
 
-        $this->getModuleRegistrationFilePath(implode('/', $explodedPath));
+        return $this->getModuleRegistrationFilePath(implode('/', $explodedPath));
     }
 }
