@@ -37,6 +37,10 @@ class ScanCommand extends Command
             $explodedName = explode(DIRECTORY_SEPARATOR, $item->getName());
             $namePath     = $explodedName[0] . DIRECTORY_SEPARATOR . $explodedName[1];
 
+            if(isset($explodedName[2])) {
+                $namePath .= DIRECTORY_SEPARATOR . $explodedName[2];
+            }
+
             if (in_array($namePath, $changedModules)) {
                 continue;
             }
