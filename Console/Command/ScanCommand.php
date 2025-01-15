@@ -80,6 +80,11 @@ class ScanCommand extends Command
         }
 
         $explodedPath = explode('/', $filePath);
+
+        if (count($explodedPath) < 2) {
+            return null;
+        }
+
         array_pop($explodedPath);
 
         if (file_exists($this->dir->getRoot() . '/' . implode('/', $explodedPath) . '/registration.php')) {
