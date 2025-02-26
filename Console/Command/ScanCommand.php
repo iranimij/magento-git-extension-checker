@@ -28,7 +28,7 @@ class ScanCommand extends Command
             ->setDescription('Scan a specific Magento module');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $gitRepository  = new Repository($this->dir->getRoot());
         $currentBranch  = $gitRepository->getInfoOperator()->getCurrentBranch();
@@ -75,6 +75,10 @@ class ScanCommand extends Command
         $allModules  = array_keys($this->fullModuleList->getAll());
         $moduleNames = array_intersect($moduleNames, $allModules);
 
+        if (empty($moduleNames)) {
+            return 1;
+        }
+
         $input = new ArrayInput([
             'command'           => 'yireo_extensionchecker:scan',
             '--module'          => implode(',', $moduleNames),
@@ -82,6 +86,8 @@ class ScanCommand extends Command
             '--hide-deprecated' => '1',
         ]);
         $this->getApplication()->doRun($input, $output);
+
+        return 1;
     }
 
     private function getModuleRegistrationFilePath($filePath)
