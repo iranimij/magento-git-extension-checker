@@ -1,7 +1,7 @@
 {
     "name": "iranimij/magento-git-extension-checker",
     "description": "Example module for Magento 2",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "require": {
         "php": "~8.1.0||~8.2.0",
         "magento/framework": "103.0.*",
