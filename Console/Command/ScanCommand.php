@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Iranimij\GitExtensionChecker\Console\Command;
 
 use Magento\Framework\Filesystem\DirectoryList;
+use Magento\Framework\Module\FullModuleList;
 use SebastianFeldmann\Git\Repository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -15,6 +16,7 @@ class ScanCommand extends Command
 {
     public function __construct(
         private readonly DirectoryList $dir,
+        private readonly FullModuleList $fullModuleList,
         $name = null,
     ) {
         parent::__construct($name);
@@ -26,7 +28,7 @@ class ScanCommand extends Command
             ->setDescription('Scan a specific Magento module');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $gitRepository  = new Repository($this->dir->getRoot());
         $currentBranch  = $gitRepository->getInfoOperator()->getCurrentBranch();
@@ -70,6 +72,9 @@ class ScanCommand extends Command
             $moduleNames[] = $moduleName;
         }
 
+        $allModules  = array_keys($this->fullModuleList->getAll());
+        $moduleNames = array_intersect($moduleNames, $allModules);
+
         $input = new ArrayInput([
             'command'           => 'yireo_extensionchecker:scan',
             '--module'          => implode(',', $moduleNames),
@@ -77,8 +82,6 @@ class ScanCommand extends Command
             '--hide-deprecated' => '1',
         ]);
         $this->getApplication()->doRun($input, $output);
-
-        return 1;
     }
 
     private function getModuleRegistrationFilePath($filePath)
